@@ -1,0 +1,10 @@
+[package]
+name = "webgl"
+version = "0.1.0"
+authors = ["Oussama <md.oussama@gmail.com>"]
+
+[dependencies]
+stdweb = "*"
+serde = "*"
+serde_derive = "*"
+serde_json = "*"

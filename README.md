@@ -3,7 +3,7 @@ webgl for wasm32-unknown-unknown using stdweb
 
 ## Example:
 
-Demo <http://og.tn/webgl-rs/example/html>
+Demo <https://og.tn/webgl-rs/example/html>
 
 To run the example in "example" folder, run:
 ```

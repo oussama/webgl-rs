@@ -3,7 +3,9 @@ extern crate stdweb;
 
 extern crate webgl;
 
+use stdweb::Value;
 use stdweb::web::*;
+use stdweb::web::event::IEvent;
 
 mod utils;
 use utils::*;
@@ -24,7 +26,7 @@ fn main() {
     let indices: Vec<u16> = vec![0, 1, 2];
     let count = indices.len();
 
-    let gl = WebGL2RenderingContext::new(&canvas);
+    let gl = WebGLRenderingContext::new(&canvas);
 
     // Create an empty buffer object to store vertex buffer
     let vertex_buffer = gl.create_buffer();
@@ -133,7 +135,30 @@ fn main() {
     gl.viewport(0.0, 0.0, 300.0, 150.0);
 
     // Draw the triangle
-    gl.draw_elements(Primitives::Triangles, count, DataType::U16, 0);
+    
+
+    let mut inc = Inc { i: 0 };
+
+
+    let mut game_loop = move|_:Value|  {
+        gl.draw_elements(Primitives::Triangles, count, DataType::U16, 0);
+        request_animation_frame();
+    };
+
+    js!{ window.addEventListener("animationFrame",@{game_loop})};
+    
+    request_animation_frame();
 
     stdweb::event_loop();
+}
+
+fn request_animation_frame() {
+    js!{ window.requestAnimationFrame(function(){
+        var event = new Event("animationFrame");
+        window.dispatchEvent(event);
+    }) };
+}
+
+pub struct Inc {
+    pub i: u32,
 }

@@ -1,10 +1,31 @@
+use std::ops::Deref;
 use stdweb::Reference;
 use stdweb::web::*;
 use stdweb::unstable::TryInto;
 use glenum::*;
 
+pub struct WebGLRenderingContext {
+    common:WebGLRenderingContextCommon,
+}
+
 pub struct WebGL2RenderingContext {
-    gl: Reference,
+    common:WebGLRenderingContextCommon,
+}
+
+pub trait AsReference {
+    fn as_reference(&self) -> &Reference;
+}
+
+impl AsReference for WebGLRenderingContext {
+    fn as_reference(&self) -> &Reference {
+        &self.common.gl
+    }
+}
+
+impl AsReference for WebGL2RenderingContext {
+    fn as_reference(&self) -> &Reference {
+        &self.common.gl
+    }
 }
 
 pub struct WebGLBuffer {
@@ -39,10 +60,53 @@ impl WebGLProgram {
 }
 
 
+impl WebGLRenderingContext {
+    pub fn new(canvas: &Element) -> WebGLRenderingContext {
+        WebGLRenderingContext {
+            common: WebGLRenderingContextCommon::new(canvas, "webgl"),
+        }
+    }
+
+    pub fn buffer_data_ptr(&self, kind: BufferKind, data_ptr: &[u8], draw: DrawMode) {
+        js! { (@{&self.as_reference()}).bufferData(@{kind as u32},@{ data_ptr }, @{draw as u32}) };
+    }
+
+    pub fn buffer_data(&self, kind: BufferKind, data: &[u8], draw: DrawMode) {
+        js! { (@{&self.as_reference()}).bufferData(@{kind as u32},@{ TypedArray::from(data) }, @{draw as u32}) };
+    }
+}
+
 impl WebGL2RenderingContext {
     pub fn new(canvas: &Element) -> WebGL2RenderingContext {
-        let gl = js! { return (@{canvas}).getContext("webgl2"); };
         WebGL2RenderingContext {
+            common: WebGLRenderingContextCommon::new(canvas, "webgl2"),
+        }
+    }
+}
+
+impl Deref for WebGLRenderingContext {
+    type Target = WebGLRenderingContextCommon;
+    fn deref(&self) -> &WebGLRenderingContextCommon {
+        &self.common
+    }
+}
+
+impl Deref for WebGL2RenderingContext {
+    type Target = WebGLRenderingContextCommon;
+    fn deref(&self) -> &WebGLRenderingContextCommon {
+        &self.common
+    }
+}
+
+pub struct WebGLRenderingContextCommon {
+    gl:Reference,
+}
+
+impl WebGLRenderingContextCommon {
+
+    pub fn new<'a>(canvas: &Element,context:&'a str) -> WebGLRenderingContextCommon {
+        let gl = js! { return (@{canvas}).getContext(@{context}); };
+        WebGLRenderingContextCommon {
             gl: gl.into_reference().unwrap(),
         }
     }
@@ -62,9 +126,7 @@ impl WebGL2RenderingContext {
         js! { (@{&self.gl}).bindBuffer(@{kind as u32},null) };
     }
 
-    pub fn buffer_data(&self, kind: BufferKind, data: &[u8], draw: DrawMode) {
-        js! { (@{&self.gl}).bufferData(@{kind as u32},@{ TypedArray::from(data) }, @{draw as u32}) };
-    }
+
 
 
     pub fn create_shader(&self, kind: ShaderKind) -> WebGLShader {

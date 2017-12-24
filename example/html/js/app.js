@@ -28,17 +28,29 @@ if( typeof Rust === 'undefined' ) {
 
     const __imports = {
         env: {
+            "__extjs_ff2c75b4783fd5c9d8c934bbd4a03e66527e05e4": function($0) {
+                Module.STDWEB.tmp = Module.STDWEB.to_js( $0 );
+            },
             "__extjs_e018696fe1ef140ccd4010854f68149d2dc12e2b": function($0, $1) {
                 Module.STDWEB.to_js($0). appendChild (Module.STDWEB.to_js($1));
+            },
+            "__extjs_de942ef9ccd064c41dc92d5b5bf83c61aeb00278": function($0) {
+                Module.STDWEB.increment_refcount( $0 );
             },
             "__extjs_d8a439451216bbc6cd9f3012f189d2ad6a2e9459": function($0) {
                 Module.STDWEB.decrement_refcount( $0 );
             },
-            "__extjs_ca342ca8da004077f30d4819a55eafd6a47c9183": function($0, $1) {
-                Module.STDWEB.from_js($0, (function(){return (Module.STDWEB.to_js($1)). getContext ("webgl2");})());
+            "__extjs_535f48dacc0ecdb0c23024588893f48014ab2fb4": function($0, $1) {
+                Module.STDWEB.from_js($0, (function(){window.addEventListener ("animationFrame" , Module.STDWEB.to_js($1))})());
             },
-            "__extjs_de942ef9ccd064c41dc92d5b5bf83c61aeb00278": function($0) {
-                Module.STDWEB.increment_refcount( $0 );
+            "__extjs_b1bc9dfcf5e9b407c4854baa21d3c8052d18cc1b": function($0) {
+                Module.STDWEB.from_js($0, (function(){window.requestAnimationFrame (function (){var event = new Event ("animationFrame"); window.dispatchEvent (event);})})());
+            },
+            "__extjs_e8be8cc92e533423b809d7c12415c58585b3ab67": function($0, $1, $2) {
+                Module.STDWEB.from_js($0, (function(){return (Module.STDWEB.to_js($1)). getContext (Module.STDWEB.to_js($2));})());
+            },
+            "__extjs_cd34939f2efaf89aed449fc292a54f8220127bc5": function($0, $1, $2, $3, $4) {
+                Module.STDWEB.from_js($0, (function(){(Module.STDWEB.to_js($1)). bufferData (Module.STDWEB.to_js($2), Module.STDWEB.to_js($3), Module.STDWEB.to_js($4))})());
             },
             "__extjs_01edeef8b64800df435fca159d4fec9096720875": function($0, $1) {
                 Module.STDWEB.from_js($0, (function(){return (Module.STDWEB.to_js($1)). createBuffer ();})());
@@ -48,9 +60,6 @@ if( typeof Rust === 'undefined' ) {
             },
             "__extjs_60bd45e8d720678d1186d98856fde87a0fa47d9c": function($0, $1, $2) {
                 Module.STDWEB.from_js($0, (function(){(Module.STDWEB.to_js($1)). bindBuffer (Module.STDWEB.to_js($2), null)})());
-            },
-            "__extjs_cd34939f2efaf89aed449fc292a54f8220127bc5": function($0, $1, $2, $3, $4) {
-                Module.STDWEB.from_js($0, (function(){(Module.STDWEB.to_js($1)). bufferData (Module.STDWEB.to_js($2), Module.STDWEB.to_js($3), Module.STDWEB.to_js($4))})());
             },
             "__extjs_b48f4f73af8917bf580a001cde27e629c1752235": function($0, $1, $2) {
                 Module.STDWEB.from_js($0, (function(){return (Module.STDWEB.to_js($1)). createShader (Module.STDWEB.to_js($2));})());

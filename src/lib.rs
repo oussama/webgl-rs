@@ -1,8 +1,7 @@
 #[macro_use]
 extern crate stdweb;
+extern crate glenum;
 
 mod webgl;
-mod glenum;
 
 pub use webgl::*;
-pub use glenum::*;

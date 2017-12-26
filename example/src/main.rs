@@ -1,11 +1,18 @@
+#![feature(nll)]
+
+#[cfg(target_arch = "wasm32")]
 #[macro_use]
 extern crate stdweb;
 
-extern crate webgl;
+#[cfg(not(target_arch = "wasm32"))]
+#[macro_use]
+extern crate glutin;
 
-use stdweb::Value;
-use stdweb::web::*;
-use stdweb::web::event::IEvent;
+
+extern crate webgl;
+extern crate application;
+
+use application::*;
 
 mod utils;
 use utils::*;
@@ -13,20 +20,21 @@ use utils::*;
 use webgl::*;
 
 
-fn main() {
-    let res = stdweb::initialize();
 
-    let canvas = document().create_element("canvas");
-    document()
-        .query_selector("body")
-        .unwrap()
-        .append_child(&canvas);
+
+fn main() {
+    let size = (800,600);
+    let config = AppConfig::new("Test",size);
+    let mut app = App::new(config);
 
     let vertices: Vec<f32> = vec![-0.5, 0.5, 0.0, -0.5, -0.5, 0.0, 0.5, -0.5, 0.0];
     let indices: Vec<u16> = vec![0, 1, 2];
     let count = indices.len();
 
-    let gl = WebGLRenderingContext::new(&canvas);
+    #[cfg(not(target_arch = "wasm32"))]
+    WebGLRenderingContext::load_with(|name|app.get_proc_address(name));
+
+    let gl = WebGLRenderingContext::new(app.canvas());
 
     // Create an empty buffer object to store vertex buffer
     let vertex_buffer = gl.create_buffer();
@@ -41,10 +49,10 @@ fn main() {
     gl.unbind_buffer(BufferKind::Array);
 
     // Create an empty buffer object to store Index buffer
-    let Index_Buffer = gl.create_buffer();
+    let index_buffer = gl.create_buffer();
 
     // Bind appropriate array buffer to it
-    gl.bind_buffer(BufferKind::ElementArray, &Index_Buffer);
+    gl.bind_buffer(BufferKind::ElementArray, &index_buffer);
 
     // Pass the vertex data to the buffer
     gl.buffer_data(
@@ -65,42 +73,42 @@ fn main() {
     }";
 
     // Create a vertex shader object
-    let vertShader = gl.create_shader(ShaderKind::Vertex);
+    let vert_shader = gl.create_shader(ShaderKind::Vertex);
 
     // Attach vertex shader source code
-    gl.shader_source(&vertShader, vert_code);
+    gl.shader_source(&vert_shader, vert_code);
 
     // Compile the vertex shader
-    gl.compile_shader(&vertShader);
+    gl.compile_shader(&vert_shader);
 
     //fragment shader source code
     let frag_code = "void main(void) {
         gl_FragColor = vec4(1, 0.5, 0.0, 1);
     }";
     // Create fragment shader object
-    let fragShader = gl.create_shader(ShaderKind::Fragment);
+    let frag_shader = gl.create_shader(ShaderKind::Fragment);
 
     // Attach fragment shader source code
-    gl.shader_source(&fragShader, frag_code);
+    gl.shader_source(&frag_shader, frag_code);
 
     // Compile the fragmentt shader
-    gl.compile_shader(&fragShader);
+    gl.compile_shader(&frag_shader);
 
     // Create a shader program object to store
     // the combined shader program
-    let shaderProgram = gl.create_program();
+    let shader_program = gl.create_program();
 
     // Attach a vertex shader
-    gl.attach_shader(&shaderProgram, &vertShader);
+    gl.attach_shader(&shader_program, &vert_shader);
 
     // Attach a fragment shader
-    gl.attach_shader(&shaderProgram, &fragShader);
+    gl.attach_shader(&shader_program, &frag_shader);
 
     // Link both the programs
-    gl.link_program(&shaderProgram);
+    gl.link_program(&shader_program);
 
     // Use the combined shader program object
-    gl.use_program(&shaderProgram);
+    gl.use_program(&shader_program);
 
     /*======= Associating shaders to buffer objects =======*/
 
@@ -108,10 +116,10 @@ fn main() {
     gl.bind_buffer(BufferKind::Array, &vertex_buffer);
 
     // Bind index buffer object
-    gl.bind_buffer(BufferKind::ElementArray, &Index_Buffer);
+    gl.bind_buffer(BufferKind::ElementArray, &index_buffer);
 
     // Get the attribute location
-    let coord = gl.get_attrib_location(&shaderProgram, "coordinates".into())
+    let coord = gl.get_attrib_location(&shader_program, "coordinates".into())
         .unwrap();
 
     // Point an attribute to the currently bound VBO
@@ -125,40 +133,22 @@ fn main() {
     // Clear the canvas
     gl.clear_color(0.5, 0.5, 0.5, 0.9);
 
+
     // Enable the depth test
     gl.enable(Flag::DepthTest);
 
     // Clear the color buffer bit
     gl.clear(BufferBit::Color);
+    gl.clear(BufferBit::Depth);
 
     // Set the view port
-    gl.viewport(0.0, 0.0, 300.0, 150.0);
-
-    // Draw the triangle
-    
-
-    let mut inc = Inc { i: 0 };
+    gl.viewport(0, 0, size.0, size.1);
 
 
-    let mut game_loop = move|_:Value|  {
+    app.run(move || {
+        gl.clear(BufferBit::Color);
+        gl.clear(BufferBit::Depth);
+        gl.clear_color(1.0, 1.0, 1.0, 1.0);
         gl.draw_elements(Primitives::Triangles, count, DataType::U16, 0);
-        request_animation_frame();
-    };
-
-    js!{ window.addEventListener("animationFrame",@{game_loop})};
-    
-    request_animation_frame();
-
-    stdweb::event_loop();
-}
-
-fn request_animation_frame() {
-    js!{ window.requestAnimationFrame(function(){
-        var event = new Event("animationFrame");
-        window.dispatchEvent(event);
-    }) };
-}
-
-pub struct Inc {
-    pub i: u32,
+    });
 }

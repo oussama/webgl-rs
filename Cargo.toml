@@ -4,8 +4,14 @@ version = "0.1.0"
 authors = ["Oussama <md.oussama@gmail.com>"]
 
 [dependencies]
-stdweb = "*"
 serde = "*"
 serde_derive = "*"
 serde_json = "*"
 glenum = "*"
+
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+stdweb = "*"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+gl = "*"

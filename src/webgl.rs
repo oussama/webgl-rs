@@ -9,7 +9,7 @@ use common::*;
 impl WebGLRenderingContext {
     pub fn new(canvas: &Element) -> WebGLRenderingContext {
         WebGLRenderingContext {
-            common: WebGLRenderingContextCommon::new(canvas, "webgl"),
+            common: GLContext::new(canvas, "webgl"),
         }
     }
 
@@ -25,17 +25,17 @@ impl WebGLRenderingContext {
 impl WebGL2RenderingContext {
     pub fn new(canvas: &Element) -> WebGL2RenderingContext {
         WebGL2RenderingContext {
-            common: WebGLRenderingContextCommon::new(canvas, "webgl2"),
+            common: GLContext::new(canvas, "webgl2"),
         }
     }
 }
 
 
-impl WebGLRenderingContextCommon {
+impl GLContext {
 
-    pub fn new<'a>(canvas: &Element,context:&'a str) -> WebGLRenderingContextCommon {
+    pub fn new<'a>(canvas: &Element,context:&'a str) -> GLContext {
         let gl = js! { return (@{canvas}).getContext(@{context}); };
-        WebGLRenderingContextCommon {
+        GLContext {
             reference: gl.into_reference().unwrap(),
         }
     }

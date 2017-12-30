@@ -35,16 +35,16 @@ pub mod common {
     #[cfg(target_arch = "wasm32")]
     use webgl::*;
 
-    pub struct WebGLRenderingContextCommon {
+    pub struct GLContext {
         pub reference: Reference,
     }
 
     pub struct WebGLRenderingContext {
-        pub common: WebGLRenderingContextCommon,
+        pub common: GLContext,
     }
 
     pub struct WebGL2RenderingContext {
-        pub common: WebGLRenderingContextCommon,
+        pub common: GLContext,
     }
 
 
@@ -52,7 +52,7 @@ pub mod common {
         fn as_reference(&self) -> &Reference;
     }
 
-    impl AsReference for WebGLRenderingContextCommon {
+    impl AsReference for GLContext {
         fn as_reference(&self) -> &Reference {
             &self.reference
         }
@@ -72,15 +72,15 @@ pub mod common {
 
 
     impl Deref for WebGLRenderingContext {
-        type Target = WebGLRenderingContextCommon;
-        fn deref(&self) -> &WebGLRenderingContextCommon {
+        type Target = GLContext;
+        fn deref(&self) -> &GLContext {
             &self.common
         }
     }
 
     impl Deref for WebGL2RenderingContext {
-        type Target = WebGLRenderingContextCommon;
-        fn deref(&self) -> &WebGLRenderingContextCommon {
+        type Target = GLContext;
+        fn deref(&self) -> &GLContext {
             &self.common
         }
     }

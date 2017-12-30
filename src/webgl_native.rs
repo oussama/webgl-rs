@@ -23,7 +23,7 @@ pub fn check_gl_error() {
 impl WebGLRenderingContext {
     pub fn new(_: &isize) -> WebGLRenderingContext {
         WebGLRenderingContext {
-            common: WebGLRenderingContextCommon { reference: 0 },
+            common: GLContext { reference: 0 },
         }
     }
 
@@ -43,14 +43,14 @@ impl WebGLRenderingContext {
 impl WebGL2RenderingContext {
     pub fn new(canvas: &isize) -> WebGL2RenderingContext {
         WebGL2RenderingContext {
-            common: WebGLRenderingContextCommon { reference: 0 },
+            common: GLContext { reference: 0 },
         }
     }
 }
 
 
 
-impl WebGLRenderingContextCommon {
+impl GLContext {
     pub fn create_buffer(&self) -> WebGLBuffer {
         let mut buffer = WebGLBuffer { reference: 0 };
         unsafe {

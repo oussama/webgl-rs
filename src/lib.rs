@@ -1,5 +1,5 @@
 #![feature(nll)]
-
+#![recursion_limit="128"]
 /* common */
 extern crate glenum;
 
@@ -126,7 +126,9 @@ pub mod common {
     }
 
     impl WebGLActiveInfo {
+        /*
         pub fn new<T:Into<String>>(name:T,size:u32,kind:UniformType) -> WebGLActiveInfo {
+            
             let nam = name.into();
             println!("aciveinfo {:?} {:?}",&nam,kind );
             WebGLActiveInfo {
@@ -134,7 +136,7 @@ pub mod common {
                 name:nam,
                 size,kind
             }
-        }
+        }*/
     }
 
     #[derive(Debug,PartialEq)]

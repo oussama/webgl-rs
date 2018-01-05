@@ -11,7 +11,7 @@ glenum = "*"
 
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-stdweb = "*"
+stdweb = "0.3"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 gl = "*"

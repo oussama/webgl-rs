@@ -307,7 +307,7 @@ impl GLContext {
         }
     }
 
-    pub fn get_program_iv(&self, program: &WebGLProgram, pname: ShaderParameter) -> i32 {
+    pub fn get_program_parameter(&self, program: &WebGLProgram, pname: ShaderParameter) -> i32 {
         let mut res = 0;
         unsafe {
             gl::GetProgramiv(program.0, pname as _, &mut res);
@@ -341,6 +341,7 @@ impl GLContext {
             //location as _,
             size as _,
             unsafe { mem::transmute::<u16, UniformType>(kind as _) },
+            0
             //unsafe { mem::transmute::<u16, DataType>(kind as _) },
         )
     }
@@ -372,6 +373,7 @@ impl GLContext {
             size as _,
             //DataType::Float
             unsafe { mem::transmute::<u16, UniformType>(kind as _) },
+            0
         )
     }
 

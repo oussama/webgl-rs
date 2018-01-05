@@ -162,12 +162,30 @@ impl GLContext {
         }
     }
 
+    pub fn tex_image2d(
+        &self,
+        target: TextureBindPoint,
+        level: u8,
+        width: u16,
+        height: u16,
+        format: PixelFormat,
+        kind: DataType,
+        pixels: &[u8],
+    ) {
+        let params1 = js! { return [@{target as u32},@{level as u32},@{format as u32}] };
+        let params2 = js! { return [@{width as u32},@{height as u32},@{format as u32},@{kind as u32}] };
+        js!{
+            var p = @{params1}.concat(@{params2});
+            (@{self.as_reference()}).texImage2d(p[0],p[1], p[2] ,p[4],p[5],p[2],p[7],@{pixels});
+        };
+    }
+
     pub fn tex_sub_image2d(&self,target:TextureBindPoint,level:u8,xoffset:u16,yoffset:u16,width:u16,height:u16,format:PixelFormat,kind:DataType,pixels:&[u8]) {
         let params1 = js! { return [@{target as u32},@{level as u32},@{xoffset as u32},@{yoffset as u32}] };
         let params2 = js! { return [@{width as u32},@{height as u32},@{format as u32},@{kind as u32}] };
         js!{
             var p = @{params1}.concat(@{params2});
-            (@{self.as_reference()}).pixelStorei(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],@{pixels});
+            (@{self.as_reference()}).texSubImage2d(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],@{pixels});
         };
     }
 
@@ -206,7 +224,7 @@ impl GLContext {
         WebGLTexture(handle.into_reference().unwrap())
     }
 
-    pub fn delete_texture(&self,texture:WebGLTexture) {
+    pub fn delete_texture(&self,texture:&WebGLTexture) {
         js!{ (@{self.as_reference()}).deleteTexture(@{&texture.0}) } 
     }
 
@@ -224,38 +242,37 @@ impl GLContext {
 
     
     pub fn uniform_matrix_4fv(&self,location:u32,value:&[[f32; 4]; 4]){
-        //js!{ (@{self.as_reference()}).uniformMatrix4fv(@{location},@{&value[0] as _}) }
+        use std::mem;
+        let array = unsafe { mem::transmute::<&[[f32; 4]; 4],&[f32;16]>(value) as &[f32] };
+        js!{ (@{self.as_reference()}).uniformMatrix4fv(@{location},@{&array}) }
     }
 
 
     pub fn uniform_matrix_3fv(&self, location: u32, value: &[[f32; 3]; 3]) {
-        unsafe {
-           // gl::UniformMatrix3fv(location as i32, 1, false as _, &value[0] as _);
-        }
+        use std::mem;
+        let array = unsafe { mem::transmute::<&[[f32; 3]; 3],&[f32;9]>(value) as &[f32] };
+        js!{ (@{self.as_reference()}).uniformMatrix3fv(@{location},@{&array}) }
     }
 
     pub fn uniform_matrix_2fv(&self, location: u32, value: &[[f32; 2]; 2]) {
-        unsafe {
-           // gl::UniformMatrix2fv(location as i32, 1, false as _, &value[0] as _);
-        }
+        use std::mem;
+        let array = unsafe { mem::transmute::<&[[f32; 2]; 2],&[f32;4]>(value) as &[f32] };
+        js!{ (@{self.as_reference()}).uniformMatrix2fv(@{location},@{&array}) }
     }
 
     pub fn uniform_1i(&self, location: u32, value: i32) {
-        unsafe {
-           // gl::Uniform1i(location as i32, value as _);
-        }
+        js!{ (@{self.as_reference()}).uniform1i(@{location},@{value}) }
     }
 
     pub fn uniform_1f(&self, location: u32, value: f32) {
-        unsafe {
-           // gl::Uniform1f(location as i32, value as _);
-        }
+        js!{ (@{self.as_reference()}).uniform1f(@{location},@{value}) }
     }
 
     pub fn uniform_4f(&self, location: u32, value: (f32, f32, f32, f32)) {
-        unsafe {
-           // gl::Uniform4f(location as i32, value.0, value.1, value.2, value.3);
+        js!{
+            var p = [@{value.0},@{value.1},@{value.2},@{value.3}];
         }
+        js!{ (@{self.as_reference()}).uniform4f(@{location},p[0],p[1],p[2],p[3]) }
     }
 
 
@@ -272,4 +289,49 @@ impl GLContext {
     pub fn unbind_vertex_array(&self) {
         js! { (@{&self.as_reference()}).bindVertexArray(0) }
     }
+
+
+    pub fn get_program_parameter(&self, program: &WebGLProgram, pname: ShaderParameter) -> i32 {
+        let res = js! { return (@{&self.as_reference()}).getProgramParameter(@{program.deref()},@{pname as u32}); };
+        res.try_into().unwrap()
+    }
+
+    pub fn get_active_uniform(&self, program: &WebGLProgram, location: u32) -> WebGLActiveInfo {
+        let res = js! { return @{self.as_reference()}.getActiveUniform(@{program.deref()},@{location}) };
+        let name = js! { return @{&res}.name };
+        let size = js!{ return @{&res}.size };
+        let kind = js!{ return @{&res}.type };
+        let k:u32 = kind.try_into().unwrap();
+        use std::mem;
+        WebGLActiveInfo::new(
+            name.into_string().unwrap(),
+            size.try_into().unwrap(),
+            unsafe { mem::transmute::<u16,UniformType>(k as _) },
+            res.into_reference().unwrap()
+        )
+    }
+
+    pub fn get_active_attrib(&self, program: &WebGLProgram, location: u32) -> WebGLActiveInfo {
+        let res = js! { return @{self.as_reference()}.getActiveAttrib(@{program.deref()},@{location}) };
+        let name = js! { return @{&res}.name };
+        let size = js!{ return @{&res}.size };
+        let kind = js!{ return @{&res}.type };
+        let k:u32 = kind.try_into().unwrap();
+        use std::mem;
+        WebGLActiveInfo::new(
+            name.into_string().unwrap(),
+            size.try_into().unwrap(),
+            unsafe { mem::transmute::<u16,UniformType>(k as _) },
+            res.into_reference().unwrap()
+        )
+    }
+
+    pub fn tex_parameteri(&self,pname:TextureParameter,param:i32){
+        js! { return @{self.as_reference()}.texParameteri(gl.TEXTURE_2D,@{pname as u32},@{param}) };
+    }
+
+    pub fn tex_parameterfv(&self,pname:TextureParameter,param:f32){
+        js! { return @{self.as_reference()}.texParameterf(gl.TEXTURE_2D,@{pname as u32},@{param}) };
+    }
+
 }

@@ -126,17 +126,14 @@ pub mod common {
     }
 
     impl WebGLActiveInfo {
-        /*
-        pub fn new<T:Into<String>>(name:T,size:u32,kind:UniformType) -> WebGLActiveInfo {
-            
+        pub fn new<T:Into<String>>(name:T,size:u32,kind:UniformType,reference:Reference) -> WebGLActiveInfo {
             let nam = name.into();
-            println!("aciveinfo {:?} {:?}",&nam,kind );
             WebGLActiveInfo {
-                reference:0,
+                reference,
                 name:nam,
                 size,kind
             }
-        }*/
+        }
     }
 
     #[derive(Debug,PartialEq)]

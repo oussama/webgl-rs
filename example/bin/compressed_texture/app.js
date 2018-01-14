@@ -112,8 +112,8 @@ if( typeof Rust === 'undefined' ) {
             "__extjs_1570faecae1344070d1d03d0da1d238f2d320b8c": function($0, $1, $2, $3) {
                 $1 = Module.STDWEB.to_js($1);$2 = Module.STDWEB.to_js($2);$3 = Module.STDWEB.to_js($3);Module.STDWEB.from_js($0, (function(){return ((($1)). getExtension ("WEBGL_compressed_texture_s3tc")|| (($2)). getExtension ("MOZ_WEBGL_compressed_texture_s3tc")|| (($3)). getExtension ("WEBKIT_WEBGL_compressed_texture_s3tc"))})());
             },
-            "__extjs_0df5dd963125b7aee9e1cd703341835f4f2b359f": function($0, $1, $2, $3, $4) {
-                $1 = Module.STDWEB.to_js($1);$2 = Module.STDWEB.to_js($2);$3 = Module.STDWEB.to_js($3);$4 = Module.STDWEB.to_js($4);Module.STDWEB.from_js($0, (function(){var p = ($1); (($2)). compressedTexImage2D (p [0], p [1], ($3). COMPRESSED_RGBA_S3TC_DXT5_EXT , 256 , 256 , 0 , ($4));})());
+            "__extjs_01512e66961f006042790b1264721b60254130f6": function($0, $1, $2, $3, $4) {
+                $1 = Module.STDWEB.to_js($1);$2 = Module.STDWEB.to_js($2);$3 = Module.STDWEB.to_js($3);$4 = Module.STDWEB.to_js($4);Module.STDWEB.from_js($0, (function(){var p = ($1); (($2)). compressedTexImage2D (p [0], p [1], ($3), p [2], p [3], 0 , ($4));})());
             },
             "__extjs_bbdf1327659a5c7f9b36cac27442123e23e63a17": function($0, $1) {
                 $1 = Module.STDWEB.to_js($1);Module.STDWEB.from_js($0, (function(){return ($1). createTexture ()})());

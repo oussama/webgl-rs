@@ -243,6 +243,7 @@ impl GLContext {
         self.log("compressed_tex_img2d");
         let params =
             js! { return [@{target as u32},@{level as u32},@{width as u32},@{height as u32}] };
+        // for some reason this needs to be called otherwise invalid format error, extension initialization?
         let ext = js! { return (
           (@{self.as_reference()}).getExtension("WEBGL_compressed_texture_s3tc") ||
           (@{self.as_reference()}).getExtension("MOZ_WEBGL_compressed_texture_s3tc") ||
@@ -254,9 +255,9 @@ impl GLContext {
             (@{self.as_reference()}).compressedTexImage2D(
                 p[0],
                 p[1],
-                @{ext}.COMPRESSED_RGBA_S3TC_DXT5_EXT,
-                256,
-                256,
+                @{compression as u16},
+                p[2],
+                p[3],
                 0,
                 @{TypedArray::from(data)}
             );

@@ -1,8 +1,15 @@
 # WebGL-rs
 
-## Example:
+## Demos:
 
-Demo <https://og.tn/webgl-rs/example/html>
+[Colored Triangle](https://og.tn/webgl-rs/example/bin/simple)
+
+![alt text](https://raw.githubusercontent.com/oussama/webgl-rs/master/example/bin/simple/triangle.PNG)
+
+[Compressed Texture](https://og.tn/webgl-rs/example/bin/compressed_texture)
+
+![alt text](https://raw.githubusercontent.com/oussama/webgl-rs/master/example/bin/compressed_texture/capture.PNG)
+
 
 To run the example in "example" folder, run:
 ```
@@ -12,7 +19,7 @@ cargo web start --target-webasm
 
 Example from https://www.tutorialspoint.com/webgl/webgl_drawing_a_triangle.htm in Rust
 
-![alt text](https://raw.githubusercontent.com/oussama/webgl-rs/master/example/triangle.PNG)
+
 
 ```rust
 let size = (800,600);

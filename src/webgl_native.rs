@@ -1,4 +1,4 @@
-use common::{WebGLBuffer,WebGLVertexArray};
+use common::{WebGLBuffer, WebGLVertexArray};
 use std::os::raw::c_void;
 use glenum::*;
 use gl;
@@ -10,12 +10,12 @@ const NAME_SIZE: usize = 64;
 
 use common::*;
 
-pub fn check_gl_error(msg:&str) {
+pub fn check_gl_error(msg: &str) {
     unsafe {
         use gl;
         let err = gl::GetError();
         if err != 0 {
-            println!("GLError: {} {}",msg, err);
+            println!("GLError: {} {}", msg, err);
         }
     }
 }
@@ -36,13 +36,18 @@ impl WebGLRenderingContext {
 }
 
 impl WebGL2RenderingContext {
-    
     pub fn new(_canvas: &isize) -> WebGL2RenderingContext {
         WebGL2RenderingContext {
             common: GLContext { reference: 0 },
         }
     }
 
+    pub fn load_with<F>(loadfn: F)
+    where
+        F: FnMut(&str) -> *const c_void,
+    {
+        gl::load_with(loadfn);
+    }
 }
 
 impl GLContext {
@@ -78,9 +83,7 @@ impl GLContext {
 
     pub fn create_shader(&self, kind: ShaderKind) -> WebGLShader {
         check_gl_error("create_shader");
-        unsafe {
-            WebGLShader(gl::CreateShader(kind as _))
-        }
+        unsafe { WebGLShader(gl::CreateShader(kind as _)) }
     }
 
     pub fn shader_source(&self, shader: &WebGLShader, source: &str) {
@@ -100,10 +103,7 @@ impl GLContext {
     }
 
     pub fn create_program(&self) -> WebGLProgram {
-        
-        let p = unsafe {
-            WebGLProgram(gl::CreateProgram())
-        };
+        let p = unsafe { WebGLProgram(gl::CreateProgram()) };
         check_gl_error("create_program");
         p
     }
@@ -172,7 +172,10 @@ impl GLContext {
                 offset as _,
             );
         }
-        println!("{:?} {:?} {:?} {:?} {:?} {:?} {:?}",location,size,kind,kind as u32,normalized,stride,offset);
+        println!(
+            "{:?} {:?} {:?} {:?} {:?} {:?} {:?}",
+            location, size, kind, kind as u32, normalized, stride, offset
+        );
         check_gl_error("vertex_attrib_pointer");
     }
 
@@ -255,7 +258,6 @@ impl GLContext {
             );
         }
     }
-
 
     pub fn tex_sub_image2d(
         &self,
@@ -364,7 +366,7 @@ impl GLContext {
             );
             name.set_len(len as _);
         }
-        println!("name {:?}",name);
+        println!("name {:?}", name);
         use std::mem;
         //let c_name = unsafe { CString::from_raw(name[0..(len+1)].as_mut_ptr())};
         WebGLActiveInfo::new(
@@ -373,13 +375,12 @@ impl GLContext {
             size as _,
             //DataType::Float
             unsafe { mem::transmute::<u16, UniformType>(kind as _) },
-            0
+            0,
         )
     }
 
-
     ///
-    pub fn create_texture(&self)-> WebGLTexture {
+    pub fn create_texture(&self) -> WebGLTexture {
         let mut handle = WebGLTexture(0);
         unsafe {
             gl::GenTextures(1, &mut handle.0);
@@ -387,13 +388,13 @@ impl GLContext {
         handle
     }
 
-    pub fn delete_texture(&self,texture:&WebGLTexture) {
+    pub fn delete_texture(&self, texture: &WebGLTexture) {
         unsafe {
-            gl::DeleteTextures(1,texture.0 as _);
+            gl::DeleteTextures(1, texture.0 as _);
         }
     }
 
-    pub fn bind_texture(&self,texture:&WebGLTexture) {
+    pub fn bind_texture(&self, texture: &WebGLTexture) {
         unsafe {
             gl::ActiveTexture(gl::TEXTURE0);
             gl::BindTexture(gl::TEXTURE_2D, texture.0);
@@ -406,13 +407,13 @@ impl GLContext {
         }
     }
 
-    pub fn blend_func(&self,b1:BlendMode,b2:BlendMode) {
+    pub fn blend_func(&self, b1: BlendMode, b2: BlendMode) {
         unsafe {
             gl::BlendFunc(b1 as _, b2 as _);
         }
     }
 
-    pub fn uniform_matrix_4fv(&self,location:u32,value:&[[f32; 4]; 4]){
+    pub fn uniform_matrix_4fv(&self, location: u32, value: &[[f32; 4]; 4]) {
         unsafe {
             gl::UniformMatrix4fv(location as i32, 1, false as _, &value[0] as _);
         }
@@ -448,18 +449,18 @@ impl GLContext {
         }
     }
 
-    pub fn tex_parameteri(&self,pname:TextureParameter,param:i32){
+    pub fn tex_parameteri(&self, pname: TextureParameter, param: i32) {
         unsafe {
-            gl::TexParameteri(gl::TEXTURE_2D,pname as _,param);
+            gl::TexParameteri(gl::TEXTURE_2D, pname as _, param);
         }
     }
 
-    pub fn tex_parameterfv(&self,pname:TextureParameter,param:f32){
+    pub fn tex_parameterfv(&self, pname: TextureParameter, param: f32) {
         unsafe {
-            gl::TexParameterfv(gl::TEXTURE_2D,pname as _,&param);
+            gl::TexParameterfv(gl::TEXTURE_2D, pname as _, &param);
         }
     }
-    
+
     pub fn create_vertex_array(&self) -> WebGLVertexArray {
         let mut vao = WebGLVertexArray(0);
         unsafe {
@@ -468,7 +469,7 @@ impl GLContext {
         vao
     }
 
-    pub fn bind_vertex_array(&self,vao:WebGLVertexArray) {
+    pub fn bind_vertex_array(&self, vao: WebGLVertexArray) {
         unsafe {
             gl::BindVertexArray(vao.0);
         }
@@ -479,5 +480,4 @@ impl GLContext {
             gl::BindVertexArray(0);
         }
     }
-
 }

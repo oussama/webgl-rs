@@ -7,7 +7,7 @@ authors = ["Oussama <md.oussama@gmail.com>"]
 serde = "*"
 serde_derive = "*"
 serde_json = "*"
-glenum = "*"
+glenum = { path = "../glenum" }
 
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

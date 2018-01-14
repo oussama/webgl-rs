@@ -1,5 +1,5 @@
 #![feature(nll)]
-#![recursion_limit="128"]
+#![recursion_limit = "128"]
 /* common */
 extern crate glenum;
 
@@ -8,12 +8,10 @@ extern crate glenum;
 #[macro_use]
 extern crate stdweb;
 
-
 #[cfg(target_arch = "wasm32")]
 mod webgl;
 #[cfg(target_arch = "wasm32")]
 pub use webgl::*;
-
 
 /* other than wasm32 */
 #[cfg(not(target_arch = "wasm32"))]
@@ -22,7 +20,6 @@ extern crate gl;
 mod webgl_native;
 #[cfg(not(target_arch = "wasm32"))]
 pub use webgl_native::*;
-
 
 pub use glenum::*;
 
@@ -36,7 +33,7 @@ pub mod common {
     #[cfg(target_arch = "wasm32")]
     use webgl::*;
 
-    #[derive(Debug,PartialEq)]
+    #[derive(Debug, PartialEq)]
     pub struct GLContext {
         pub reference: Reference,
     }
@@ -50,7 +47,6 @@ pub mod common {
     pub struct WebGL2RenderingContext {
         pub common: GLContext,
     }
-
 
     pub trait AsReference {
         fn as_reference(&self) -> &Reference;
@@ -73,7 +69,6 @@ pub mod common {
             &self.common.as_reference()
         }
     }
-
 
     impl Deref for WebGLRenderingContext {
         type Target = GLContext;
@@ -108,7 +103,7 @@ pub mod common {
         }
     }
 
-    #[derive(Debug,PartialEq)]
+    #[derive(Debug, PartialEq)]
     pub struct WebGLProgram(pub Reference);
     impl Deref for WebGLProgram {
         type Target = Reference;
@@ -119,24 +114,30 @@ pub mod common {
 
     #[derive(Debug)]
     pub struct WebGLActiveInfo {
-        reference:Reference,
-        name:String,
-        size:u32,
-        kind:UniformType
+        reference: Reference,
+        name: String,
+        size: u32,
+        kind: UniformType,
     }
 
     impl WebGLActiveInfo {
-        pub fn new<T:Into<String>>(name:T,size:u32,kind:UniformType,reference:Reference) -> WebGLActiveInfo {
+        pub fn new<T: Into<String>>(
+            name: T,
+            size: u32,
+            kind: UniformType,
+            reference: Reference,
+        ) -> WebGLActiveInfo {
             let nam = name.into();
             WebGLActiveInfo {
                 reference,
-                name:nam,
-                size,kind
+                name: nam,
+                size,
+                kind,
             }
         }
     }
 
-    #[derive(Debug,PartialEq)]
+    #[derive(Debug, PartialEq)]
     pub struct WebGLTexture(pub Reference);
     impl Deref for WebGLTexture {
         type Target = Reference;
@@ -154,9 +155,6 @@ pub mod common {
         }
     }
 
-    
-
 }
-
 
 pub use common::*;

@@ -115,7 +115,7 @@ pub fn main() {
     let coord = gl.get_attrib_location(&shader_program, "a_pos".into())
         .expect("Attribute not found");
     // Point an attribute to the currently bound VBO
-    gl.vertex_attrib_pointer(coord, 3, DataType::Float, false, 20, 0);
+    gl.vertex_attrib_pointer(coord, AttributeSize::Three, DataType::Float, false, 20, 0);
     // Enable the attribute
     gl.enable_vertex_attrib_array(coord);
 
@@ -123,7 +123,7 @@ pub fn main() {
     let uv = gl.get_attrib_location(&shader_program, "a_uv".into())
         .expect("Attribute not found");
     // Point an attribute to the currently bound VBO
-    gl.vertex_attrib_pointer(uv, 2, DataType::Float, false, 20, 12);
+    gl.vertex_attrib_pointer(uv, AttributeSize::Two, DataType::Float, false, 20, 12);
     // Enable the attribute
     gl.enable_vertex_attrib_array(uv);
 

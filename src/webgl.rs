@@ -108,24 +108,32 @@ impl GLContext {
         value.try_into().ok() as _
     }
 
-    pub fn get_uniform_location(&self, program: &WebGLProgram, name: &str) -> Option<u32> {
+    pub fn get_uniform_location(
+        &self,
+        program: &WebGLProgram,
+        name: &str,
+    ) -> Option<WebGLUniformLocation> {
         self.log("get_uniform_location");
-        let value =
-            js! { return (@{self.as_reference()}).getUniformLocation(@{program.deref()},@{name}) };
-        value.try_into().ok() as _
+        let value = js! { var res = (@{self.as_reference()}).getUniformLocation(@{program.deref()},@{name});
+            console.log(@{name},res);
+            return res;
+        };
+        value
+            .into_reference()
+            .map(|reference| WebGLUniformLocation(reference))
     }
 
     pub fn vertex_attrib_pointer(
         &self,
         location: u32,
-        size: u32,
+        size: AttributeSize,
         kind: DataType,
         normalized: bool,
         stride: u32,
         offset: u32,
     ) {
         self.log("vertex_attribute_pointer");
-        let params = js! { return [@{location},@{size},@{kind as i32},@{normalized}] };
+        let params = js! { return [@{location},@{size as u16},@{kind as i32},@{normalized}] };
         js! {
             var p = @{params};
             (@{self.as_reference()}).vertexAttribPointer(p[0],p[1],p[2],p[3],@{stride},@{offset});
@@ -204,7 +212,7 @@ impl GLContext {
             js! { return [@{width as u32},@{height as u32},@{format as u32},@{kind as u32}] };
         js!{
             var p = @{params1}.concat(@{params2});
-            (@{self.as_reference()}).texImage2D(p[0],p[1], p[2] ,p[4],p[5],0,p[2],p[7],@{pixels});
+            (@{self.as_reference()}).texImage2D(p[0],p[1], p[2] ,p[3],p[4],0,p[2],p[6],@{TypedArray::from(pixels)});
         };
     }
 
@@ -227,7 +235,7 @@ impl GLContext {
             js! { return [@{width as u32},@{height as u32},@{format as u32},@{kind as u32}] };
         js!{
             var p = @{params1}.concat(@{params2});
-            (@{self.as_reference()}).texSubImage2d(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],@{pixels});
+            (@{self.as_reference()}).texSubImage2D(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],@{TypedArray::from(pixels)});
         };
     }
 
@@ -293,39 +301,39 @@ impl GLContext {
         js!{ (@{self.as_reference()}).blendFunc(@{b1 as u32},@{b2 as u32}) }
     }
 
-    pub fn uniform_matrix_4fv(&self, location: u32, value: &[[f32; 4]; 4]) {
+    pub fn uniform_matrix_4fv(&self, location: WebGLUniformLocation, value: &[[f32; 4]; 4]) {
         self.log("uniform_matrix_4fv");
         use std::mem;
         let array = unsafe { mem::transmute::<&[[f32; 4]; 4], &[f32; 16]>(value) as &[f32] };
-        js!{ (@{self.as_reference()}).uniformMatrix4fv(@{location},@{&array}) }
+        js!{ (@{self.as_reference()}).uniformMatrix4fv(@{location.deref()},false,@{&array}) }
     }
 
-    pub fn uniform_matrix_3fv(&self, location: u32, value: &[[f32; 3]; 3]) {
+    pub fn uniform_matrix_3fv(&self, location: WebGLUniformLocation, value: &[[f32; 3]; 3]) {
         self.log("uniform_matrix_3fv");
         use std::mem;
         let array = unsafe { mem::transmute::<&[[f32; 3]; 3], &[f32; 9]>(value) as &[f32] };
-        js!{ (@{self.as_reference()}).uniformMatrix3fv(@{location},@{&array}) }
+        js!{ (@{self.as_reference()}).uniformMatrix3fv(@{location.deref()},false,@{&array}) }
     }
 
-    pub fn uniform_matrix_2fv(&self, location: u32, value: &[[f32; 2]; 2]) {
+    pub fn uniform_matrix_2fv(&self, location: WebGLUniformLocation, value: &[[f32; 2]; 2]) {
         use std::mem;
         let array = unsafe { mem::transmute::<&[[f32; 2]; 2], &[f32; 4]>(value) as &[f32] };
-        js!{ (@{self.as_reference()}).uniformMatrix2fv(@{location},@{&array}) }
+        js!{ (@{self.as_reference()}).uniformMatrix2fv(@{location.deref()},false,@{&array}) }
     }
 
-    pub fn uniform_1i(&self, location: u32, value: i32) {
-        js!{ (@{self.as_reference()}).uniform1i(@{location},@{value}) }
+    pub fn uniform_1i(&self, location: WebGLUniformLocation, value: i32) {
+        js!{ (@{self.as_reference()}).uniform1i(@{location.deref()},@{value}) }
     }
 
-    pub fn uniform_1f(&self, location: u32, value: f32) {
-        js!{ (@{self.as_reference()}).uniform1f(@{location},@{value}) }
+    pub fn uniform_1f(&self, location: WebGLUniformLocation, value: f32) {
+        js!{ (@{self.as_reference()}).uniform1f(@{location.deref()},@{value}) }
     }
 
-    pub fn uniform_4f(&self, location: u32, value: (f32, f32, f32, f32)) {
+    pub fn uniform_4f(&self, location: WebGLUniformLocation, value: (f32, f32, f32, f32)) {
         js!{
             var p = [@{value.0},@{value.1},@{value.2},@{value.3}];
         }
-        js!{ (@{self.as_reference()}).uniform4f(@{location},p[0],p[1],p[2],p[3]) }
+        js!{ (@{self.as_reference()}).uniform4f(@{location.deref()},p[0],p[1],p[2],p[3]) }
     }
 
     pub fn create_vertex_array(&self) -> WebGLVertexArray {

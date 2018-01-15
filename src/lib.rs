@@ -155,6 +155,15 @@ pub mod common {
         }
     }
 
+    #[derive(Debug, PartialEq)]
+    pub struct WebGLUniformLocation(pub Reference);
+    impl Deref for WebGLUniformLocation {
+        type Target = Reference;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+
 }
 
 pub use common::*;

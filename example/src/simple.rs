@@ -103,7 +103,7 @@ pub fn main() {
         .unwrap();
 
     // Point an attribute to the currently bound VBO
-    gl.vertex_attrib_pointer(coord, 3, DataType::Float, false, 0, 0);
+    gl.vertex_attrib_pointer(coord, AttributeSize::Three , DataType::Float, false, 0, 0);
 
     // Enable the attribute
     gl.enable_vertex_attrib_array(coord);

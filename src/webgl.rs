@@ -27,7 +27,7 @@ impl WebGL2RenderingContext {
 
 impl GLContext {
     pub fn log<T: Into<String>>(&self, msg: T) {
-        js!{ console.log(@{msg.into()})};
+       // js!{ console.log(@{msg.into()})};
     }
 
     pub fn new<'a>(canvas: &Element, context: &'a str) -> GLContext {
@@ -114,10 +114,7 @@ impl GLContext {
         name: &str,
     ) -> Option<WebGLUniformLocation> {
         self.log("get_uniform_location");
-        let value = js! { var res = (@{self.as_reference()}).getUniformLocation(@{program.deref()},@{name});
-            console.log(@{name},res);
-            return res;
-        };
+        let value = js! { return (@{self.as_reference()}).getUniformLocation(@{program.deref()},@{name});};
         value
             .into_reference()
             .map(|reference| WebGLUniformLocation(reference))

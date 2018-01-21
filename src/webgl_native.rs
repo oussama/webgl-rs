@@ -76,6 +76,13 @@ impl GLContext {
         check_gl_error("buffer_data");
     }
 
+    pub fn buffer_sub_data(&self, kind: BufferKind,offset:u32, data: &[u8]) {
+        unsafe {
+            gl::BufferSubData(kind as _,offset as _, data.len() as _, data.as_ptr() as _);
+        }
+        check_gl_error("buffer_data");
+    }
+
     pub fn unbind_buffer(&self, kind: BufferKind) {
         unsafe {
             gl::BindBuffer(kind as _, 0);

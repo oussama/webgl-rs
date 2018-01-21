@@ -14,7 +14,7 @@ pub fn main() {
     #[cfg(not(target_arch = "wasm32"))]
     WebGLRenderingContext::load_with(|name| app.get_proc_address(name));
 
-    let gl = WebGLRenderingContext::new(app.canvas());
+    let gl = WebGLRenderingContext::new("canvas");
 
     // Create an empty buffer object to store vertex buffer
     let vertex_buffer = gl.create_buffer();
@@ -123,7 +123,7 @@ pub fn main() {
     // Set the view port
     gl.viewport(0, 0, size.0, size.1);
 
-    app.run(move || {
+    app.run(move |_t:&mut App| {
         gl.clear(BufferBit::Color);
         gl.clear(BufferBit::Depth);
         gl.clear_color(1.0, 1.0, 1.0, 1.0);

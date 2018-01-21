@@ -27,7 +27,7 @@ impl WebGL2RenderingContext {
 
 impl GLContext {
     pub fn log<T: Into<String>>(&self, msg: T) {
-       // js!{ console.log(@{msg.into()})};
+        js!{ console.log(@{msg.into()})};
     }
 
     pub fn new<'a>(canvas: &Element, context: &'a str) -> GLContext {
@@ -114,10 +114,13 @@ impl GLContext {
         name: &str,
     ) -> Option<WebGLUniformLocation> {
         self.log("get_uniform_location");
-        let value = js! { return (@{self.as_reference()}).getUniformLocation(@{program.deref()},@{name});};
+        let value = js! { var res = (@{self.as_reference()}).getUniformLocation(@{program.deref()},@{name});
+            console.log(@{name},res);
+            return res;
+        };
         value
             .into_reference()
-            .map(|reference| WebGLUniformLocation(reference))
+            .map(|reference| WebGLUniformLocation{reference,name:name.into()})
     }
 
     pub fn vertex_attrib_pointer(
@@ -249,14 +252,13 @@ impl GLContext {
         let params =
             js! { return [@{target as u32},@{level as u32},@{width as u32},@{height as u32}] };
         // for some reason this needs to be called otherwise invalid format error, extension initialization?
-        let ext = js! { return (
+        js! {
           (@{self.as_reference()}).getExtension("WEBGL_compressed_texture_s3tc") ||
           (@{self.as_reference()}).getExtension("MOZ_WEBGL_compressed_texture_s3tc") ||
           (@{self.as_reference()}).getExtension("WEBKIT_WEBGL_compressed_texture_s3tc")
-        )};
+        };
         js! {
 
-            var p = @{params};
             (@{self.as_reference()}).compressedTexImage2D(
                 p[0],
                 p[1],

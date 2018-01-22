@@ -25,7 +25,7 @@ pub fn check_gl_error(msg: &str) {
 impl WebGLRenderingContext {
     pub fn new(_canvas: &isize) -> WebGLRenderingContext {
         WebGLRenderingContext {
-            common: GLContext { reference: 0 },
+            common: GLContext::new(),
         }
     }
 
@@ -40,7 +40,7 @@ impl WebGLRenderingContext {
 impl WebGL2RenderingContext {
     pub fn new(_canvas: &isize) -> WebGL2RenderingContext {
         WebGL2RenderingContext {
-            common: GLContext { reference: 0 },
+            common: GLContext::new(),
         }
     }
 
@@ -53,6 +53,12 @@ impl WebGL2RenderingContext {
 }
 
 impl GLContext {
+
+    pub fn new() -> GLContext {
+      //  unsafe { gl::Enable(gl::DEPTH_TEST) };
+
+        GLContext{reference:0}
+    }
     pub fn create_buffer(&self) -> WebGLBuffer {
         let mut buffer = WebGLBuffer(0);
         unsafe {
@@ -162,7 +168,7 @@ impl GLContext {
             if location == -1 {
                 return None;
             }
-            return Some(WebGLUniformLocation(location as _));
+            return Some(WebGLUniformLocation{reference:location as _,name:name.into()});
         }
     }
 

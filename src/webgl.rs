@@ -32,6 +32,7 @@ impl GLContext {
     }
 
     pub fn new<'a>(canvas_selector: &str, context: &'a str) -> GLContext {
+        use stdweb;
         let gl = js! { return document.querySelector(@{canvas_selector}).getContext(@{context}); };
         GLContext {
             reference: gl.into_reference().unwrap(),
@@ -44,7 +45,11 @@ impl GLContext {
     }
 
     pub fn buffer_data(&self, kind: BufferKind, data: &[u8], draw: DrawMode) {
-        js! { (@{&self.as_reference()}).bufferData(@{kind as u32},@{ TypedArray::from(data) }, @{draw as u32}) };
+        js! { (@{&self.as_reference()}).bufferData(@{kind as u32},@{ unsafe { TypedArray::from(data) } }, @{draw as u32}) };
+    }
+
+    pub fn buffer_sub_data(&self, kind: BufferKind,offset:u32, data: &[u8]) {
+        js! { (@{&self.as_reference()}).bufferSubData(@{kind as u32},@{offset},@{ unsafe { UnsafeTypedArray::new(data) } }) };
     }
 
     pub fn bind_buffer(&self, kind: BufferKind, buffer: &WebGLBuffer) {

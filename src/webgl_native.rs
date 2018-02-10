@@ -191,10 +191,6 @@ impl GLContext {
                 offset as _,
             );
         }
-        println!(
-            "{:?} {:?} {:?} {:?} {:?} {:?} {:?}",
-            location, size, kind, kind as u32, normalized, stride, offset
-        );
         check_gl_error("vertex_attrib_pointer");
     }
 

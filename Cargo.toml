@@ -13,7 +13,7 @@ documentation = "https://docs.rs/webgl"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
-glenum = { path = "../glenum" }
+glenum = { git = "https://github.com/oussama/glenum-rs" }
 
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

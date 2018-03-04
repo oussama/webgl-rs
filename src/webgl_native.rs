@@ -464,6 +464,12 @@ impl GLContext {
         }
     }
 
+    pub fn uniform_4fv(&self, location: WebGLUniformLocation, value: &[f32;4]) {
+        unsafe {
+            gl::Uniform4fv(*location.deref() as _,1 as _, &value[0] as _);
+        }
+    }
+
     pub fn tex_parameteri(&self, pname: TextureParameter, param: i32) {
         unsafe {
             gl::TexParameteri(gl::TEXTURE_2D, pname as _, param);

@@ -255,8 +255,12 @@ impl GLContext {
         //js!{ (self.as_reference()}).uniform1f(location.deref()},value}) }
     }
 
+    pub fn uniform_4fv(&self, location: WebGLUniformLocation, value: (f32, f32, f32, f32)) {
+        js!{ (self.as_reference()}).uniform4f(@{location.deref()},&[value.0,value.1,value.2,value.3].as_ptr() as _) }
+    }
+
     pub fn uniform_4f(&self, location: WebGLUniformLocation, value: (f32, f32, f32, f32)) {
-        //js!{ (self.as_reference()}).uniform4f(location.deref()},value.0},value.1},value.2},value.3}) }
+        js!{ (self.as_reference()}).uniform4f(@{location.deref()},@{value.0},@{value.1},@{value.2},@{value.3}) }
     }
 
     pub fn create_vertex_array(&self) -> WebGLVertexArray {

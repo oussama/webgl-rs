@@ -17,7 +17,7 @@ glenum = { git = "https://github.com/oussama/glenum-rs" }
 
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-stdweb = { git = "https://github.com/koute/stdweb", optional = true }
+stdweb = { version = "0.4.6", optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 gl = "0.9"

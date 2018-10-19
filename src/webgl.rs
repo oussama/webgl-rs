@@ -1,9 +1,9 @@
-use std::ops::Deref;
-pub use stdweb::Reference;
-use stdweb::web::*;
-use stdweb::unstable::TryInto;
-use glenum::*;
 use common::*;
+use glenum::*;
+use std::ops::Deref;
+use stdweb::unstable::TryInto;
+use stdweb::web::*;
+pub use stdweb::Reference;
 use stdweb::UnsafeTypedArray;
 
 impl WebGLRenderingContext {
@@ -48,7 +48,7 @@ impl GLContext {
         js! { (@{&self.as_reference()}).bufferData(@{kind as u32},@{ unsafe { TypedArray::from(data) } }, @{draw as u32}) };
     }
 
-    pub fn buffer_sub_data(&self, kind: BufferKind,offset:u32, data: &[u8]) {
+    pub fn buffer_sub_data(&self, kind: BufferKind, offset: u32, data: &[u8]) {
         js! { (@{&self.as_reference()}).bufferSubData(@{kind as u32},@{offset},@{ unsafe { UnsafeTypedArray::new(data) } }) };
     }
 
@@ -113,7 +113,10 @@ impl GLContext {
         };
         value
             .into_reference()
-            .map(|reference| WebGLUniformLocation{reference,name:name.into()})
+            .map(|reference| WebGLUniformLocation {
+                reference,
+                name: name.into(),
+            })
     }
 
     pub fn vertex_attrib_pointer(
@@ -287,6 +290,10 @@ impl GLContext {
 
     pub fn uniform_4f(&self, location: WebGLUniformLocation, value: (f32, f32, f32, f32)) {
         js!{ (@{self.as_reference()}).uniform4f(@{location.deref()},@{value.0},@{value.1},@{value.2},@{value.3}) }
+    }
+
+    pub fn uniform_4fv(&self, location: WebGLUniformLocation, value: &[f32; 4]) {
+        js!{ (@{self.as_reference()}).uniform4fv(@{location.deref()},@{value as &[f32]}) }
     }
 
     pub fn create_vertex_array(&self) -> WebGLVertexArray {

@@ -27,7 +27,7 @@ impl WebGL2RenderingContext {
 
 impl GLContext {
     pub fn log<T: Into<String>>(&self, msg: T) {
-       // js!{ console.log(msg.into()})};
+        js!{ console.log(@{msg.into()})};
     }
 
     pub fn new<'a>(canvas: &str, context: &'a str) -> GLContext {
@@ -255,12 +255,12 @@ impl GLContext {
         //js!{ (self.as_reference()}).uniform1f(location.deref()},value}) }
     }
 
-    pub fn uniform_4fv(&self, location: WebGLUniformLocation, value: (f32, f32, f32, f32)) {
-        js!{ (self.as_reference()}).uniform4f(@{location.deref()},&[value.0,value.1,value.2,value.3].as_ptr() as _) }
+    pub fn uniform_4f(&self, location: WebGLUniformLocation, value: (f32, f32, f32, f32)) {
+        js!{ (@{self.as_reference()}).uniform4f(@{location.deref()},@{value.0},value.1,value.2,value.3].as_ptr() as _) }
     }
 
-    pub fn uniform_4f(&self, location: WebGLUniformLocation, value: (f32, f32, f32, f32)) {
-        js!{ (self.as_reference()}).uniform4f(@{location.deref()},@{value.0},@{value.1},@{value.2},@{value.3}) }
+    pub fn uniform_4fv(&self, location: WebGLUniformLocation, value: &[f32; 4]) {
+        js!{ (@{self.as_reference()}).uniform4fv(@{location.deref()},@{value}) }
     }
 
     pub fn create_vertex_array(&self) -> WebGLVertexArray {

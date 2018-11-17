@@ -1,0 +1,21 @@
+{
+  "name": "webgl",
+  "collaborators": [
+    "Oussama <md.oussama@gmail.com>"
+  ],
+  "description": "wasm32 first cross-platform webgl",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oussama/webgl-rs"
+  },
+  "files": [
+    "webgl_bg.wasm",
+    "webgl.js",
+    "webgl.d.ts"
+  ],
+  "module": "webgl.js",
+  "types": "webgl.d.ts",
+  "sideEffects": "false"
+}

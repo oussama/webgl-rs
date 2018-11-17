@@ -1,14 +1,7 @@
-#[cfg(not(target_arch = "wasm32"))]
 use webgl_native::*;
-#[cfg(all(target_arch = "wasm32",feature = "stdw"))]
-use webgl::*;
-#[cfg(all(target_arch = "wasm32",not(feature = "stdw")))]
-use webgl_web::*;
-
 
 use glenum::*;
 use std::ops::Deref;
-
 
 #[derive(Debug, PartialEq)]
 pub struct GLContext {
@@ -132,10 +125,10 @@ impl Deref for WebGLVertexArray {
     }
 }
 
-#[derive(Debug,Clone, PartialEq)]
-pub struct WebGLUniformLocation{
-    pub reference:Reference,
-    pub name:String,
+#[derive(Debug, Clone, PartialEq)]
+pub struct WebGLUniformLocation {
+    pub reference: Reference,
+    pub name: String,
 }
 
 impl Deref for WebGLUniformLocation {
@@ -146,10 +139,7 @@ impl Deref for WebGLUniformLocation {
 }
 
 impl WebGLUniformLocation {
-    pub fn new(name:String,reference:Reference) -> WebGLUniformLocation {
-        WebGLUniformLocation {
-            name,
-            reference
-        }
+    pub fn new(name: String, reference: Reference) -> WebGLUniformLocation {
+        WebGLUniformLocation { name, reference }
     }
 }

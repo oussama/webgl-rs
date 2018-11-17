@@ -1,0 +1,4 @@
+Oct 19 17:42:14.061 ERRO crate-type must be cdylib to compile to wasm32-unknown-unknown. Add the following to your Cargo.toml file:
+
+[lib]
+crate-type = ["cdylib", "rlib"]

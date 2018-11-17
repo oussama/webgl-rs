@@ -1,27 +1,15 @@
-#![feature(nll)]
 #![recursion_limit = "128"]
 /* common */
 extern crate glenum;
-
 /* wasm32 with stdweb */
 
-#[cfg(all(target_arch = "wasm32", feature = "stdw"))]
-#[macro_use]
-extern crate stdweb;
-
-#[cfg(all(target_arch = "wasm32", feature = "stdw"))]
-mod webgl;
-
-#[cfg(all(target_arch = "wasm32", feature = "stdw"))]
-pub use webgl::*;
+#[cfg(all(target_arch = "wasm32"))]
+extern crate web_sys;
 
 /* wasm32 with manual ffi */
 
-#[cfg(all(target_arch = "wasm32", not(feature = "stdw")))]
-mod webgl_web;
-
-#[cfg(all(target_arch = "wasm32", not(feature = "stdw")))]
-pub use webgl_web::*;
+#[cfg(all(target_arch = "wasm32"))]
+pub use web_sys::*;
 
 /* other than wasm32 */
 
@@ -31,10 +19,9 @@ extern crate gl;
 mod webgl_native;
 #[cfg(not(target_arch = "wasm32"))]
 pub use webgl_native::*;
-
+#[cfg(not(target_arch = "wasm32"))]
 mod common;
 
-pub use common::*;
-pub use glenum::*;
-
 mod tests {}
+
+pub use glenum::*;
